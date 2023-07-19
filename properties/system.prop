@@ -13,6 +13,7 @@ persist.vendor.btstack.enable.splita2dp=true
 persist.vendor.btstack.enable.twsplus=true
 persist.vendor.btstack.enable.twsplussho=true
 vendor.bluetooth.soc=cherokee
+ro.bluetooth.library_name=libbluetooth_qti.so
 
 # Camera
 camera.disable_zsl_mode=true
@@ -88,7 +89,7 @@ sys.fflag.override.settings_seamless_transfer=true
 persist.vendor.sensors.enable.mag_filter=true
 
 # WFD
-debug.sf.enable_hwc_vds=1
+debug.sf.enable_hwc_vds=0
 debug.sf.latch_unsignaled=1
 media.wfd.max_resolution=8
 persist.debug.wfd.enable=1
