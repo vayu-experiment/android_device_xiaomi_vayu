@@ -4740,6 +4740,13 @@ esac
 case "$target" in
     "msmnile")
 
+    # Core control parameters for gold
+	echo 1 > /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
+	echo 50 > /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres
+	echo 30 > /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres
+	echo 500 > /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms
+	echo 3 > /sys/devices/system/cpu/cpu4/core_ctl/task_thres
+
 	# Core control parameters for gold+
 	echo 0 > /sys/devices/system/cpu/cpu7/core_ctl/min_cpus
 	echo 60 > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
@@ -4758,7 +4765,6 @@ case "$target" in
 
 	# Disable Core control on silver and gold
 	echo 0 > /sys/devices/system/cpu/cpu0/core_ctl/enable
-    echo 0 > /sys/devices/system/cpu/cpu4/core_ctl/enable
 
 	# Setting b.L scheduler parameters
 	echo 95 95 > /proc/sys/kernel/sched_upmigrate
@@ -4802,23 +4808,26 @@ case "$target" in
 
 	# configure input boost settings
 	echo "0:1209600" > /sys/module/cpu_boost/parameters/input_boost_freq
-	echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
+	echo 120 > /sys/module/cpu_boost/parameters/input_boost_ms
     echo "0:1785600 1:0 2:0 3:0 4:2419200 5:0 6:0 7:0" > /sys/module/cpu_boost/parameters/powerkey_input_boost_freq
-    echo 500 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
+    echo 250 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
 
     # disable GPU throttling
     echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
 
     # tune schedtune
-    echo 8 > /dev/stune/schedtune.boost
+    echo 10 > /dev/stune/schedtune.boost
     echo 1 > /dev/stune/schedtune.sched_boost_no_override
 
     echo 20 > /dev/stune/rt/schedtune.boost
     echo 1 > /dev/stune/rt/schedtune.sched_boost_no_override
 
-    echo 12 > /dev/stune/top-app/schedtune.boost
+    echo 15 > /dev/stune/top-app/schedtune.boost
     echo 1 > /dev/stune/top-app/schedtune.prefer_idle
     echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
+
+    echo 10 > /dev/stune/foreground/schedtune.boost
+    echo 1 > /dev/stune/foreground/schedtune.sched_boost_no_override
 
 	# Disable wsf, beacause we are using efk.
 	# wsf Range : 1..1000 So set to bare minimum value 1.
