@@ -4739,18 +4739,12 @@ esac
 
 case "$target" in
     "msmnile")
-	# Core control parameters for gold
-	echo 2 > /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
-	echo 20 > /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres
-	echo 10 > /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres
-	echo 500 > /sys/devices/system/cpu/cpu4/core_ctl/offline_delay_ms
-	echo 3 > /sys/devices/system/cpu/cpu4/core_ctl/task_thres
 
 	# Core control parameters for gold+
 	echo 0 > /sys/devices/system/cpu/cpu7/core_ctl/min_cpus
-	echo 20 > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
-	echo 10 > /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
-	echo 500 > /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
+	echo 60 > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
+	echo 30 > /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
+	echo 100 > /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
 	echo 1 > /sys/devices/system/cpu/cpu7/core_ctl/task_thres
 	# Controls how many more tasks should be eligible to run on gold CPUs
 	# w.r.t number of gold CPUs available to trigger assist (max number of
@@ -4762,8 +4756,9 @@ case "$target" in
 	# plus misfit tasks on silver cores) to trigger assitance from gold+.
 	echo 1 > /sys/devices/system/cpu/cpu7/core_ctl/nr_prev_assist_thresh
 
-	# Disable Core control on silver
+	# Disable Core control on silver and gold
 	echo 0 > /sys/devices/system/cpu/cpu0/core_ctl/enable
+    echo 0 > /sys/devices/system/cpu/cpu4/core_ctl/enable
 
 	# Setting b.L scheduler parameters
 	echo 95 95 > /proc/sys/kernel/sched_upmigrate
@@ -4776,7 +4771,7 @@ case "$target" in
 	echo 0-2     > /dev/cpuset/background/cpus
 	echo 0-3     > /dev/cpuset/system-background/cpus
 	echo 4-7     > /dev/cpuset/foreground/boost/cpus
-	echo 0-3,4-6 > /dev/cpuset/foreground/cpus
+	echo 0-3,4-7 > /dev/cpuset/foreground/cpus
 	echo 0-7     > /dev/cpuset/top-app/cpus
 
 	# Turn off scheduler boost at the end
@@ -4784,38 +4779,50 @@ case "$target" in
 
 	# configure governor settings for silver cluster
 	echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy0/scaling_governor
-	echo 500 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us
+	echo 0 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us
     echo 20000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 	echo 1209600 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_freq
+	echo 1 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/iowait_boost_enable
 	echo 576000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
 	echo 1 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/pl
 
 	# configure governor settings for gold cluster
 	echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy4/scaling_governor
-	echo 500 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us
-    echo 20000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
+	echo 0 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us
+    echo 0 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 	echo 1612800 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/hispeed_freq
 	echo 1 > /sys/devices/system/cpu/cpufreq/policy4/schedutil/pl
 
 	# configure governor settings for gold+ cluster
 	echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy7/scaling_governor
-	echo 250 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/up_rate_limit_us
-    echo 10000 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
+	echo 0 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/up_rate_limit_us
+    echo 0 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 	echo 1612800 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/hispeed_freq
 	echo 1 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/pl
 
 	# configure input boost settings
-	echo "0:1708800 4:1401600" > /sys/module/cpu_boost/parameters/input_boost_freq
-	echo 1000 > /sys/module/cpu_boost/parameters/input_boost_ms
-        echo "0:1785600 1:0 2:0 3:0 4:2419200 5:0 6:0 7:0" > /sys/module/cpu_boost/parameters/powerkey_input_boost_freq
-        echo 400 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
+	echo "0:1209600" > /sys/module/cpu_boost/parameters/input_boost_freq
+	echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
+    echo "0:1785600 1:0 2:0 3:0 4:2419200 5:0 6:0 7:0" > /sys/module/cpu_boost/parameters/powerkey_input_boost_freq
+    echo 500 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
 
     # disable GPU throttling
-    echo 0 > /sys/class/kgsl/kgsl-3s0/throttling
+    echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
+
+    # tune schedtune
+    echo 8 > /dev/stune/schedtune.boost
+    echo 1 > /dev/stune/schedtune.sched_boost_no_override
+
+    echo 20 > /dev/stune/rt/schedtune.boost
+    echo 1 > /dev/stune/rt/schedtune.sched_boost_no_override
+
+    echo 12 > /dev/stune/top-app/schedtune.boost
+    echo 1 > /dev/stune/top-app/schedtune.prefer_idle
+    echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
 	# Disable wsf, beacause we are using efk.
 	# wsf Range : 1..1000 So set to bare minimum value 1.
-        echo 1 > /proc/sys/vm/watermark_scale_factor
+    echo 1 > /proc/sys/vm/watermark_scale_factor
 
         # Enable oom_reaper
 	if [ -f /sys/module/lowmemorykiller/parameters/oom_reaper ]; then
