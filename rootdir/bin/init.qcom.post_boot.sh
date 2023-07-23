@@ -4810,13 +4810,13 @@ case "$target" in
     echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
 
     # tune schedtune
-    echo 5 > /dev/stune/schedtune.boost
+    echo 8 > /dev/stune/schedtune.boost
     echo 1 > /dev/stune/schedtune.sched_boost_no_override
 
     echo 20 > /dev/stune/rt/schedtune.boost
     echo 1 > /dev/stune/rt/schedtune.sched_boost_no_override
 
-    echo 10 > /dev/stune/top-app/schedtune.boost
+    echo 12 > /dev/stune/top-app/schedtune.boost
     echo 1 > /dev/stune/top-app/schedtune.prefer_idle
     echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
