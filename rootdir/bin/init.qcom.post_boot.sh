@@ -4810,7 +4810,7 @@ case "$target" in
         echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
 
         # tune schedtune
-        echo 10 > /dev/stune/schedtune.boost
+        echo 15 > /dev/stune/schedtune.boost
         echo 1 > /dev/stune/schedtune.sched_boost_no_override
 
         echo 100 > /dev/stune/rt/schedtune.boost
@@ -4820,6 +4820,9 @@ case "$target" in
         echo 1 > /dev/stune/top-app/schedtune.prefer_idle
         echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
+        echo 10 > /dev/stune/foreground/schedtune.boost
+        echo 1 > /dev/stune/foreground/schedtune.sched_boost_no_override
+ 
 	# Disable wsf, beacause we are using efk.
 	# wsf Range : 1..1000 So set to bare minimum value 1.
         echo 1 > /proc/sys/vm/watermark_scale_factor
@@ -5624,6 +5627,13 @@ case "$target" in
     ;;
     "msm8909" | "msm8916" | "msm8937" | "msm8952" | "msm8953" | "msm8994" | "msm8992" | "msm8996" | "msm8998" | "sdm660" | "apq8098_latv" | "sdm845" | "sdm710" | "msmnile" | "msmsteppe" | "sm6150" | "kona" | "lito" | "trinket" | "atoll" | "bengal" | "sdmshrike")
         setprop vendor.post_boot.parsed 1
+	
+        # disable GPU throttling
+        echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
+
+        # optimize random
+	echo 1024 > /proc/sys/kernel/random/write_wakeup_threshold
+        echo 512 > /proc/sys/kernel/random/read_wakeup_threshold
     ;;
     "apq8084")
         rm /data/system/perfd/default_values
