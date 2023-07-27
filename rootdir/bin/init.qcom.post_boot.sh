@@ -4802,21 +4802,21 @@ case "$target" in
 
 	# configure input boost settings
 	echo "0:1632000" > /sys/module/cpu_boost/parameters/input_boost_freq
-	echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
+	echo 1000 > /sys/module/cpu_boost/parameters/input_boost_ms
         echo "0:1785600 1:0 2:0 3:0 4:2419200 5:0 6:0 7:0" > /sys/module/cpu_boost/parameters/powerkey_input_boost_freq
-        echo 500 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
+        echo 1000 > /sys/module/cpu_boost/parameters/powerkey_input_boost_ms
 
         # disable GPU throttling
         echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
 
         # tune schedtune
-        echo 20 > /dev/stune/schedtune.boost
+        echo 15 > /dev/stune/schedtune.boost
         echo 1 > /dev/stune/schedtune.sched_boost_no_override
 
         echo 100 > /dev/stune/rt/schedtune.boost
         echo 1 > /dev/stune/rt/schedtune.sched_boost_no_override
 
-        echo 20 > /dev/stune/top-app/schedtune.boost
+        echo 15 > /dev/stune/top-app/schedtune.boost
         echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
         echo 15 > /dev/stune/foreground/schedtune.boost
