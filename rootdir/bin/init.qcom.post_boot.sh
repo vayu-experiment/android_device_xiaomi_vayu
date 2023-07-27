@@ -4742,8 +4742,8 @@ case "$target" in
 
 	# Core control parameters for gold+
 	echo 0 > /sys/devices/system/cpu/cpu7/core_ctl/min_cpus
-	echo 80 > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
-	echo 50 > /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
+	echo 90 > /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres
+	echo 70 > /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres
 	echo 100 > /sys/devices/system/cpu/cpu7/core_ctl/offline_delay_ms
 	echo 1 > /sys/devices/system/cpu/cpu7/core_ctl/task_thres
 	# Controls how many more tasks should be eligible to run on gold CPUs
@@ -4810,17 +4810,16 @@ case "$target" in
         echo 0 > /sys/class/kgsl/kgsl-3d0/throttling
 
         # tune schedtune
-        echo 15 > /dev/stune/schedtune.boost
+        echo 20 > /dev/stune/schedtune.boost
         echo 1 > /dev/stune/schedtune.sched_boost_no_override
 
         echo 100 > /dev/stune/rt/schedtune.boost
         echo 1 > /dev/stune/rt/schedtune.sched_boost_no_override
 
-        echo 15 > /dev/stune/top-app/schedtune.boost
-        echo 1 > /dev/stune/top-app/schedtune.prefer_idle
+        echo 20 > /dev/stune/top-app/schedtune.boost
         echo 1 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
-        echo 10 > /dev/stune/foreground/schedtune.boost
+        echo 15 > /dev/stune/foreground/schedtune.boost
         echo 1 > /dev/stune/foreground/schedtune.sched_boost_no_override
  
 	# Disable wsf, beacause we are using efk.
